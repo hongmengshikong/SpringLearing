@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+<!--    <bean id="user" class="cn.edu.xcu.entity.User">-->
+<!--        <property name="id" value="1" />-->
+<!--        <property name="username" value="shikong" />-->
+<!--        <property name="password" value="xcu2024" />-->
+<!--    </bean>-->
+    <bean id="user" class="cn.edu.xcu.spring.entity.User" scope="singleton">
+        <property name="id" value="1" />
+        <property name="username" value="shikong" />
+        <property name="password" value="xcu2023" />
+    </bean>
+    <bean id="userDao" class="cn.edu.xcu.spring.entity.UserDaoImpl">
+        <property name="user" ref="user" />
+    </bean>
+<!--    <bean id="user2" name="lisi,100101" class="cn.edu.xcu.entity.User">-->
+<!--        <property name="id" value="2" />-->
+<!--        <property name="username" value="lisi" />-->
+<!--        <property name="password" value="xcu1111" />-->
+<!--    </bean>-->
+    <bean id="user2" name="lisi,100101" class="cn.edu.xcu.spring.entity.User" scope="prototype">
+        <property name="id" value="2" />
+        <property name="username" value="lisi" />
+        <property name="password" value="xcu1111" />
+    </bean>
+    <bean id="user3" class="cn.edu.xcu.spring.entity.User">
+        <constructor-arg name="id" value="3" />
+        <constructor-arg name="username" value="wangwu" />
+        <constructor-arg name="password" value="123456" />
+    </bean>
+    <bean id="user4" class="cn.edu.xcu.spring.entity.UserFactoryBean" factory-method="createUser" />
+    <bean class="cn.edu.xcu.spring.entity.UserDaoImpl">
+        <property name="user" ref="user" />
+        <property name="users">
+            <list>
+                <ref bean="user"/>
+                <ref bean="user2"/>
+                <ref bean="user3"/>
+                <ref bean="user4"/>
+            </list>
+        </property>
+    </bean>
+</beans>
