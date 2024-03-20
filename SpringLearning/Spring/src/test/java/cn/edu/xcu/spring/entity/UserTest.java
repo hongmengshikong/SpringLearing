@@ -78,7 +78,7 @@ public class UserTest {
     @Test
     public void listTest(){
         ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
-        UserDao userDao= (UserDao) context.getBean("cn.edu.xcu.entity.UserDaoImpl");
+        UserDao userDao= (UserDao) context.getBean("cn.edu.xcu.spring.entity.UserDaoImpl");
         List<User> users = userDao.findAllUsers();
         users.stream().forEach(System.out::println);
     }
