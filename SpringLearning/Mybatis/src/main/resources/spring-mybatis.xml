@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+    </settings>
+    <typeAliases>
+        <package name="cn.edu.xcu.mybatis.entity"/>
+    </typeAliases>
+    <mappers>
+        <mapper resource="cn/edu/xcu/mybatis/mapper/UserMapper.xml"/>
+    </mappers>
+</configuration>
