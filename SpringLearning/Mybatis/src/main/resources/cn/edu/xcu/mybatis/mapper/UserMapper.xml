@@ -172,6 +172,7 @@
     </update>
 
 
+<!--    <insert id="insertUser" parameterType="user" >-->
     <insert id="insertUser" parameterType="user" useGeneratedKeys="true" keyProperty="id">
         insert into t_user
         <trim prefix="(" suffix=")" suffixOverrides=",">
