@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h3>ddd⻚⾯，可以通过request、session、context，model携带数据传递给前端</h3>
+<p>username：<span th:text="${username}"></span> </p>
+<p>session username：<span th:text="${session.username}"></span> </p>
+<p>context username：<span th:text="${application.username}"></span> </p>
+<p>⽤户名：<span th:text="${user.username}"></span></p>
+<p>密码：<span th:text="${user.password}"></span></p>
+<p>年龄：<span th:text="${user.age}"></span></p>
+</body>
+</html>

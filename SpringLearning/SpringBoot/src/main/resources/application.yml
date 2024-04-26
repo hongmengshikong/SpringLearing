@@ -1,0 +1,9 @@
+server:
+  port: 8080
+  address: localhost
+spring:
+  thymeleaf:
+    mode: HTML
+    suffix: .html
+    prefix: classpath:/templates/
+    cache: false
