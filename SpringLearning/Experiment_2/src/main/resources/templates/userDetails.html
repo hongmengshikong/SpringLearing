@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>userDetails</title>
+</head>
+<body>
+<h3>显示用户信息</h3>
+<p>用户ID：<span th:text="${user.id}"></span></p>
+<p>用户名:<span th:text="${user.username}"></span></p>
+<p>用户昵称:<span th:text="${user.userNick}"></span></p>
+
+<p>用户邮箱:<span th:text="${user.email}"></span></p>
+<p>用户年龄:<span th:text="${user.age}"></span></p>
+<p>用户生日:<span th:text="${user.birth}"></span></p>
+<p>账户创建时间:<span th:text="${user.createTime}"></span></p>
+
+<p>用户身份证号码:<span th:text="${user.idCard?.code}"></span></p>
+<p>用户所属省份:<span th:text="${user.idCard?.province}"></span></p>
+
+<div th:each="role : ${user.roles}">
+    <p>角色名称:<span th:text="${role.roleName}"></span> 角色描述:<span th:text="${role.roleDesc}"></span> </p>
+</div>
+</body>
+</html>
