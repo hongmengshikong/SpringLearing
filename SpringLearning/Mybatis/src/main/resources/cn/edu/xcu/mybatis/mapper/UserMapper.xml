@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.edu.xcu.mybatis.mapper.UserMapper">
+    <select id="findUserById" parameterType="long" resultType="user">
+        select *
+        from t_user
+        where id = #{id}
+    </select>
+    <select id="findUserByUsername" resultType="User">
+        select *
+        from t_user
+        where username = #{username}
+    </select>
+    <select id="findUserByUsernameAndPassword" resultType="cn.edu.xcu.mybatis.entity.User">
+        select *
+        from t_user
+        where username = '${param1}'
+          and password = '${param2}'
+    </select>
+    <select id="findUserByUsernameAndPassword2" resultType="cn.edu.xcu.mybatis.entity.User">
+        select *
+        from t_user
+        where username = #{username}
+          and password = #{password}
+    </select>
+    <sql id="userCols">
+        id
+        ,username,password,age
+    </sql>
+    <resultMap id="userMap" type="user">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="age" column="age"/>
+    </resultMap>
+    <select id="findUserByMap" parameterType="map" resultMap="userMap">
+        select
+        <include refid="userCols"/>
+        from t_user where username=#{userMap.username} and
+        password=#{userMap.password}
+    </select>
+    <select id="findUserByEmail" parameterType="user" resultType="cn.edu.xcu.mybatis.entity.User">
+        -- select * from t_user where email like '${email}'
+        select *
+        from t_user
+        where email like concat('%', #{email}, '%')
+    </select>
+
+
+    <resultMap id="userWithCardMap" type="user">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="userNick" column="user_nick"/>
+        <result property="age" column="age"/>
+        <result property="email" column="email"/>
+        <association property="idCard" column="card_id"
+                     select="cn.edu.xcu.mybatis.mapper.IdCardMapper.findIdCardById"/>
+    </resultMap>
+    <select id="findUserWithIdCard" resultMap="userWithCardMap">
+        select *
+        from t_user
+        where id = #{id}
+    </select>
+
+
+    <resultMap id="userWithCardMap2" type="user">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="userNick" column="user_nick"/>
+        <result property="age" column="age"/>
+        <result property="email" column="email"/>
+        <association property="idCard" javaType="idCard">
+            <id property="id" column="card_id"/>
+            <result property="code" column="code"/>
+            <result property="province" column="province"/>
+        </association>
+    </resultMap>
+    <select id="findUserWithIdCard2" resultMap="userWithCardMap2">
+        select u.*, c.code, c.province
+        from t_user u
+                 left join t_idcard c on u.card_id = c.id
+        where u.id = #{id}
+    </select>
+
+    <resultMap id="userWithRoles" type="user">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="email" column="email"/>
+        <result property="age" column="age"/>
+        <collection property="roles" column="id" ofType="role"
+                    select="cn.edu.xcu.mybatis.mapper.RoleMapper.findRolesByUserId"/>
+    </resultMap>
+    <select id="findUserWithRoles" resultMap="userWithRoles">
+        select *
+        from t_user
+        where id = #{id}
+    </select>
+
+    <resultMap id="userWithRoles2" type="user">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="email" column="email"/>
+        <result property="age" column="age"/>
+        <collection property="roles" ofType="role">
+            <id property="id" column="role_id"/>
+            <result property="roleName" column="role_name"/>
+            <result property="roleDesc" column="role_desc"/>
+        </collection>
+    </resultMap>
+
+    <select id="findUserWithRoles2" resultMap="userWithRoles2">
+        select u.*, ur.role_id, r.role_name, r.role_desc
+        from t_user u
+                 left JOIN t_user_role ur on u.id = ur.user_id
+                 left JOIN t_role r on ur.role_id = r.id
+        where u.id = #{id}
+    </select>
+
+    <select id="findUsers" parameterType="user" resultType="cn.edu.xcu.mybatis.entity.User">
+        select * from t_user
+        <where>
+            <if test="username!=null and username!=''">
+                and username like concat('%',#{username},'%')
+            </if>
+            <if test="email!=null and email!=''">
+                and email=#{email}
+            </if>
+            <if test="age!=null">
+                and age=#{age}
+            </if>
+        </where>
+    </select>
+
+    <select id="findUsersByChoose" resultType="cn.edu.xcu.mybatis.entity.User">
+        select * from t_user
+        <where>
+            <choose>
+                <when test="username!=null and username!=''">
+                    username=#{username}
+                </when>
+                <when test="email!=null and email!=''">
+                    email=#{email}
+                </when>
+                <otherwise>
+                    age=#{age}
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <update id="updateUser" parameterType="user">
+        update t_user
+        <set>
+            <if test="username!=null and username!=''">
+                username=#{username},
+            </if>
+            <if test="password!=null and password!=''">
+                password=#{password},
+            </if>
+            <if test="email!=null and email!=''">
+                email=#{email},
+            </if>
+            <if test="age!=null">
+                age=#{age},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+
+<!--    <insert id="insertUser" parameterType="user" >-->
+    <insert id="insertUser" parameterType="user" useGeneratedKeys="true" keyProperty="id">
+        insert into t_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="username!=null and username!=''">
+                username,
+            </if>
+            <if test="password!=null and password!=''">
+                password,
+            </if>
+            <if test="email!=null and email!=''">
+                email,
+            </if>
+            <if test="age!=null">
+                age,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="username!=null and username!=''">
+                #{username},
+            </if>
+            <if test="password!=null and password!=''">
+                #{password},
+            </if>
+            <if test="email!=null and email!=''">
+                #{email},
+            </if>
+            <if test="age!=null">
+                #{age},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="insertUsers">
+        insert into t_user (username,password,email,age)
+        values
+        <foreach collection="users" item="user" separator=",">
+            (#{user.username},#{user.password},#{user.email},#{user.age})
+        </foreach>
+    </insert>
+
+    <delete id="deleteUserByIds" parameterType="long">
+        delete from t_user
+        where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
