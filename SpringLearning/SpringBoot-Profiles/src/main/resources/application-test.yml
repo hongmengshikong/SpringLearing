@@ -1,0 +1,7 @@
+person:
+  id: 3003
+  name: 赵六
+  hobby:
+    - ccc
+    - sport
+    - read

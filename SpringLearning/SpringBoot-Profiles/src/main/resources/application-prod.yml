@@ -1,0 +1,7 @@
+person:
+  id: 2002
+  name: 王五
+  hobby:
+    - bbb
+    - sport
+    - read

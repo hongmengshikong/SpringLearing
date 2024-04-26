@@ -1,0 +1,7 @@
+person:
+  id: 1001
+  name: 李四
+  hobby:
+    - aaa
+    - sport
+    - read
