@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.edu.xcu.experiment_1.mapper.UserMapper">
+    <resultMap id="id" type="user">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="userNick" column="user_nick"/>
+        <result property="age" column="age"/>
+        <result property="email" column="email"/>
+    </resultMap>
+    <insert id="saveUser" useGeneratedKeys="true" keyProperty="id">
+        insert into t_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="username!=null and username!=''">
+                username,
+            </if>
+            <if test="password!=null and password !=''">
+                password,
+            </if>
+            <if test="userNick!=null and userNick !=''">
+                user_nick,
+            </if>
+            <if test="email!=null and email !=''">
+                email,
+            </if>
+            <if test="age!=null">
+                age,
+            </if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="username!=null and username!=''">
+                #{username},
+            </if>
+            <if test="password!=null and password !=''">
+                #{password},
+            </if>
+            <if test="userNick!=null and userNick !=''">
+                #{userNick},
+            </if>
+            <if test="email!=null and email !=''">
+                #{email},
+            </if>
+            <if test="age!=null">
+                #{age},
+            </if>
+        </trim>
+    </insert>
+
+    <delete id="removeUserById">
+        delete from t_user where id=#{id}
+    </delete>
+
+    <select id="findUserById" parameterType="long" resultType="cn.edu.xcu.experiment_1.entity.User">
+        select * from t_user where id = #{id}
+    </select>
+
+    <resultMap id="userWithRoles" type="user">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="userNick" column="user_nick"/>
+        <result property="age" column="age"/>
+        <result property="email" column="email"/>
+        <collection property="roles" ofType="role">
+            <id property="id" column="role_id"/>
+            <result property="roleName" column="role_name"/>
+            <result property="roleDesc" column="role_desc"/>
+        </collection>
+    </resultMap>
+
+
+    <select id="findUserWithRoles" resultMap="userWithRoles">
+        select u.*,ur.role_id,r.role_name,r.role_desc
+        from t_user u
+                 left join t_user_role ur on u.id=ur.user_id
+                 left join t_role r on ur.role_id=r.id
+        where u.id=#{id}
+    </select>
+    <update id="updateUser" parameterType="user">
+        update t_user
+        <set>
+            <if test="username!=null and username!=''">
+                username = #{username},
+            </if>
+            <if test="password!=null and password!=''">
+                password = #{password},
+            </if>
+            <if test="userNick!=null and userNick !=''">
+                user_nick=#{userNick},
+            </if>
+            <if test="email!=null and email!=''">
+                email=#{email},
+            </if>
+            <if test="age!=null">
+                age=#{age}
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <resultMap id="userWithIdCard" type="user">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="userNick" column="user_nick"/>
+        <result property="age" column="age"/>
+        <result property="email" column="email"/>
+        <association property="idCard" javaType="idCard">
+            <id property="id" column="card_id"/>
+            <result property="code" column="code"/>
+            <result property="province" column="province"/>
+        </association>
+    </resultMap>
+    <select id="findAllUsersWithCard" resultMap="userWithIdCard">
+        select u.*,c.code,c.province from t_user u left join t_idcard c on u.card_id=c.id
+    </select>
+</mapper>
