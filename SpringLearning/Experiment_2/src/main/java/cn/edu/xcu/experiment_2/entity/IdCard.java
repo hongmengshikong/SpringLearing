@@ -17,8 +17,8 @@ import java.time.LocalDateTime;
 public class IdCard {
     private Long id;
     @NotNull(message = "身份证号码不能为空", groups = {ValidGroup.Insert.class})
-    @Pattern(regexp = "id{18}", message = "身份议号码必须18位")
-    private Long code;
+    @Pattern(regexp = "\\d{18}", message = "身份议号码必须18位",groups = {ValidGroup.Insert.class})
+    private String code;
     @NotBlank(message = "所在省份不能为空", groups = {ValidGroup.Insert.class})
     private String province;
     @TableLogic
