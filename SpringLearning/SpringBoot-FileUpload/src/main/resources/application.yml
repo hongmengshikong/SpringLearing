@@ -1,0 +1,27 @@
+server:
+  port: 8080
+spring:
+  thymeleaf:
+    mode: html
+    prefix: classpath:/templates/
+    suffix: .html
+    cache: false
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mybatis?seUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+#限制文件大小
+#  servlet:
+#    multipart:
+#      max-file-size: 1024MB
+#      max-request-size: 1024MB
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+file:
+  downloadDir: F:/临时文件夹/download/
+  uploadDir: F:/临时文件夹/upload/

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文件上传与下载</title>
+</head>
+<body>
+<a th:href="${'/download/GitHub入门与实践.pdf'}">GitHub入门与实践.pdf</a><br/>
+<a th:href="${'/download/示例.xlsx'}">示例.xlsx</a><br/>
+<form th:action="${'/upload'}" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" multiple="multiple"><br/>
+    <input type="submit" value="上传">
+</form>
+<br/>
+<a th:href="${'/export/user/poi'}">POI导出⽤户信息</a>
+<br/>
+<form th:action="${'/import/user/poi'}" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" multiple="multiple"><br/>
+    <input type="submit" value="POI导⼊⽤户信息">
+</form>
+<br/>
+<a th:href="${'/export/user/easy'}">EasyExcel导出⽤户信息</a>
+<form th:action="${'/import/user/easy'}" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" multiple="multiple"><br/>
+    <input type="submit" value="EasyExcel导⼊⽤户信息">
+</form>
+
+</body>
+</html>
