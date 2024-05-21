@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>用户登录</title>
+    <style>
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<h3>用户登录页面</h3>
+<div class="error" th:text="${msg}"></div>
+<form th:action="@{/user/login}" method="post">
+    <input type="text" name="username"><br/>
+    <input type="password" name="passwd"><br/>
+    <input type="submit" value="登录">
+</form>
+<img th:src="@{/img/test.jpeg}">
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SpringBoot⾼级功能首页</title>
+    <style>
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<h3>SpringBoot⾼级功能首页</h3>
+<div th:text="${msg}"></div>
+<a href="/depts">部门管理</a><br>
+<a href="/emps">员工管理</a><br>
+<a href="/user/logout">注销</a>
+</body>
+</html>
