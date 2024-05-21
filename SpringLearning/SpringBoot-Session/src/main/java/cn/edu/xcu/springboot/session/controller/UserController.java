@@ -2,6 +2,8 @@ package cn.edu.xcu.springboot.session.controller;
 
 import cn.edu.xcu.springboot.session.entity.User;
 import cn.edu.xcu.springboot.session.service.UserService;
+import cn.edu.xcu.springboot.session.utils.R;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 @Controller
 @Slf4j
@@ -97,5 +101,14 @@ public class UserController {
 //        resp.addCookie(cookie);
         session.removeAttribute("user");
         return "index";
+    }
+    @GetMapping("/params")
+    public R getUserByParams(User user){
+        List<User> users= userService.findUserByParams(user);
+        if (CollUtil.isNotEmpty(users)){
+            return R.ok(users);
+        }else {
+            return R.fail("当前列表为空");
+        }
     }
 }

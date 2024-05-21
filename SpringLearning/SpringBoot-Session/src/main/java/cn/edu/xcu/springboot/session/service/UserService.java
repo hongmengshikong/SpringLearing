@@ -3,6 +3,8 @@ package cn.edu.xcu.springboot.session.service;
 import cn.edu.xcu.springboot.session.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
 * @author 时空
 * @description 针对表【t_user】的数据库操作Service
@@ -11,4 +13,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface UserService extends IService<User> {
 
     User login(String username, String passwd);
+
+    List<User> findUserByParams(User user);
 }
