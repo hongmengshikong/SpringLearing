@@ -18,13 +18,13 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    @Bean
-    public UserDetailsService userDetailsService() {
-        InMemoryUserDetailsManager manager=new InMemoryUserDetailsManager();
-        manager.createUser(User.withUsername("zhangsan").password(passwordEncoder().encode("123")).authorities("p1").build());
-        manager.createUser(User.withUsername("lisi").password(passwordEncoder().encode("456")).authorities("ROLE_p2").build());
-        return manager;
-    }
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//        InMemoryUserDetailsManager manager=new InMemoryUserDetailsManager();
+//        manager.createUser(User.withUsername("zhangsan").password(passwordEncoder().encode("123")).authorities("p1").build());
+//        manager.createUser(User.withUsername("lisi").password(passwordEncoder().encode("456")).authorities("ROLE_p2").build());
+//        return manager;
+//    }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf->csrf.disable());
