@@ -1,19 +1,30 @@
 package cn.edu.xcu.springboot.security.config;
 
 import cn.edu.xcu.springboot.security.filter.CaptchaFilter;
+import cn.edu.xcu.springboot.security.filter.JwtAuthenticationTokenFilter;
+import cn.edu.xcu.springboot.security.filter.TokenLoginFilter;
+import cn.edu.xcu.springboot.security.handler.TokenLogoutHandler;
+import cn.edu.xcu.springboot.security.utils.RedisCache;
+import cn.edu.xcu.springboot.security.utils.TokenManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 
 import javax.sql.DataSource;
@@ -24,6 +35,16 @@ import javax.sql.DataSource;
 public class SecurityConfig {
     @Autowired
     DataSource dataSource;
+    @Autowired
+    private LogoutSuccessHandler logoutSuccessHandler;
+    @Autowired
+    private AccessDeniedHandler accessDeniedHandler;
+    @Autowired
+    private AuthenticationEntryPoint authenticationEntryPoint;
+    @Autowired
+    private RedisCache redisCache;
+    @Autowired
+    private TokenManager tokenManager;
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -36,23 +57,22 @@ public class SecurityConfig {
 //        return manager;
 //    }
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http,JdbcTokenRepositoryImpl jdbcTokenRepository) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)throws Exception {
+        return configuration.getAuthenticationManager();
+    }
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,AuthenticationManager manager) throws Exception {
         http.csrf(csrf->csrf.disable());
-        http.formLogin(login->login.usernameParameter("username")
-                .passwordParameter("passwd")
-                .loginPage("/toLogin")
-                .loginProcessingUrl("/user/login").permitAll())
-                .logout(logout->logout.logoutUrl("/logout").logoutSuccessUrl("/"))
-                .authorizeHttpRequests(auth->auth.requestMatchers("/vcode").permitAll()
-//                        .requestMatchers("/r/r1").hasAnyAuthority("p1")
-//                        .requestMatchers("/r/r2").hasRole("p2")
-//                        .requestMatchers("/css/*","/images/*","/js/*").permitAll()
+        http.sessionManagement(sm->sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .logout(logout->logout.logoutUrl("/user/logout")
+                        .logoutSuccessHandler(logoutSuccessHandler)
+                        .addLogoutHandler(new TokenLogoutHandler(redisCache, tokenManager)))
+                .authorizeRequests(auth->auth.requestMatchers("/user/register","/vcode").permitAll()
                         .anyRequest().authenticated());
-        http.rememberMe(remember->remember.tokenValiditySeconds(600)
-                .tokenRepository(jdbcTokenRepository())
-                .rememberMeParameter("remember-me"));
-
-        http.addFilterBefore(new CaptchaFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtAuthenticationTokenFilter(redisCache,tokenManager), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAt(new TokenLoginFilter(redisCache, tokenManager, manager), UsernamePasswordAuthenticationFilter.class);
+        http.exceptionHandling(ex->ex.accessDeniedHandler(accessDeniedHandler)
+                .authenticationEntryPoint(authenticationEntryPoint));
         return http.build();
     }
     @Bean

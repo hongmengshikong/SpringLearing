@@ -1,5 +1,7 @@
 package cn.edu.xcu.springboot.security.service.impl;
 
+import cn.edu.xcu.springboot.security.dto.UserAddDto;
+import cn.edu.xcu.springboot.security.dto.UserChPassDto;
 import cn.edu.xcu.springboot.security.entity.LoginUser;
 import cn.edu.xcu.springboot.security.entity.Menu;
 import cn.edu.xcu.springboot.security.entity.Role;
@@ -9,11 +11,15 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.edu.xcu.springboot.security.entity.User;
 import cn.edu.xcu.springboot.security.service.UserService;
 import cn.edu.xcu.springboot.security.mapper.UserMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -32,6 +38,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     private RoleService roleService;
     @Autowired
     private MenuService menuService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public LoginUser getLoginUserByUsername(String username) {
@@ -61,6 +69,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         loginUser.setPermissions(permission);
 
         return loginUser;
+    }
+
+    @Override
+    public int changeUserPassword(UserChPassDto user) {
+        LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.set(User::getPassword,passwordEncoder.encode(user.getPassword()))
+                .eq(User::getUserName,user.getUsername());
+        return baseMapper.update(wrapper);
+    }
+
+    @Override
+    public int addUser(UserAddDto userDto) {
+        User user = new User();
+        BeanUtils.copyProperties(userDto,user);
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        return baseMapper.insert(user);
     }
 }
 

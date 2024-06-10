@@ -1,5 +1,7 @@
 package cn.edu.xcu.springboot.security.service;
 
+import cn.edu.xcu.springboot.security.dto.UserAddDto;
+import cn.edu.xcu.springboot.security.dto.UserChPassDto;
 import cn.edu.xcu.springboot.security.entity.LoginUser;
 import cn.edu.xcu.springboot.security.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -12,4 +14,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface UserService extends IService<User> {
 
     LoginUser getLoginUserByUsername(String username);
+
+    int changeUserPassword(UserChPassDto user);
+
+    int addUser(UserAddDto user);
 }
